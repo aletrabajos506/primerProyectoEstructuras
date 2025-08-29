@@ -74,7 +74,98 @@ class Cliente:
         """Verifica si la clave dada coincide con la clave hasheada del cliente."""
         clave_hash = hashlib.sha256(clave.encode()).hexdigest()
         return self.__hashClave == clave_hash
+    
+    
+    
+    
+import hashlib
+from typing import Optional
 
+class Auth:
+    def __init__(self):
+        
+        self.__clientes: list[Cliente] = []
+
+    def hashClave(self, clave: str) -> str:
+        
+        return hashlib.sha256(clave.encode()).hexdigest()
+
+    def registrarCliente(self, cliente: Cliente):
+        
+        self.__clientes.append(cliente)
+
+    def login(self, idCliente: str, clave: str) -> Optional[Cliente]:
+        
+        for cliente in self.__clientes:
+            if cliente.idCliente == idCliente and cliente.autenticar(clave):
+                return cliente
+        return None
+
+class Ticket:
+    def __init__(self, idTicket: str, idEvento: str, idCliente: str, sector: str, 
+                 precio: int, estado: str, fechaCompra: str):
+        self.__idTicket = idTicket
+        self.__idEvento = idEvento
+        self.__idCliente = idCliente
+        self.__sector = sector
+        self.__precio = precio
+        self.__estado = estado       # Ej: "Válido", "Cancelado", "Usado"
+        self.__fechaCompra = fechaCompra
+        self.__usado = False         # Atributo interno para marcar si fue utilizado
+
+    # --- Getters ---
+    @property
+    def idTicket(self) -> str:
+        return self.__idTicket
+
+    @property
+    def idEvento(self) -> str:
+        return self.__idEvento
+
+    @property
+    def idCliente(self) -> str:
+        return self.__idCliente
+
+    @property
+    def sector(self) -> str:
+        return self.__sector
+
+    @property
+    def precio(self) -> int:
+        return self.__precio
+
+    @property
+    def estado(self) -> str:
+        return self.__estado
+
+    @property
+    def fechaCompra(self) -> str:
+        return self.__fechaCompra
+
+    @property
+    def usado(self) -> bool:
+        return self.__usado
+
+    
+    def usar(self):
+        if not self.__usado and self.__estado == "Válido":
+            self.__usado = True
+            self.__estado = "Usado"
+            print(f"Ticket {self.__idTicket} usado con éxito.")
+        elif self.__estado != "Válido":
+            print(f"El ticket {self.__idTicket} no es válido (Estado: {self.__estado}).")
+        else:
+            print(f"El ticket {self.__idTicket} ya fue usado.")
+
+    def esValido(self) -> bool:
+        """Verifica si el ticket aún es válido para usarse"""
+        return self.__estado == "Válido" and not self.__usado
+
+    
+    def __str__(self):
+        return (f"Ticket({self.__idTicket}, Evento:{self.__idEvento}, Cliente:{self.__idCliente}, "
+                f"Sector:{self.__sector}, Precio:{self.__precio}, Estado:{self.__estado}, "
+                f"FechaCompra:{self.__fechaCompra})")
 
 
 
