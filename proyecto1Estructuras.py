@@ -1,4 +1,7 @@
 import hashlib
+from typing import List
+from datetime import datetime
+
 
 
 class PilaUndo:
@@ -167,7 +170,55 @@ class Ticket:
                 f"Sector:{self.__sector}, Precio:{self.__precio}, Estado:{self.__estado}, "
                 f"FechaCompra:{self.__fechaCompra})")
 
+class MergeSort:
+    @staticmethod
+    def ordenarEventos(listaEventos: List[Evento]) -> List[Evento]:
+        if len(listaEventos) <= 1:
+            return listaEventos
 
+        mid = len(listaEventos) // 2
+        izquierda = MergeSort.ordenarEventos(listaEventos[:mid])
+        derecha = MergeSort.ordenarEventos(listaEventos[mid:])
+
+        return MergeSort._merge(izquierda, derecha)
+
+    @staticmethod
+    def _merge(izquierda: List[Evento], derecha: List[Evento]) -> List[Evento]:
+        resultado = []
+        i = j = 0
+
+        while i < len(izquierda) and j < len(derecha):
+            # Comparar por fecha (asumiendo formato YYYY-MM-DD)
+            fecha_izq = datetime.strptime(izquierda[i].fecha, "%Y-%m-%d")
+            fecha_der = datetime.strptime(derecha[j].fecha, "%Y-%m-%d")
+
+            if fecha_izq <= fecha_der:
+                resultado.append(izquierda[i])
+                i += 1
+            else:
+                resultado.append(derecha[j])
+                j += 1
+
+        # agregar sobrantes
+        resultado.extend(izquierda[i:])
+        resultado.extend(derecha[j:])
+        return resultado
+
+
+class QuickSort:
+    @staticmethod
+    def ordenarEventos(listaEventos: List[Evento]) -> List[Evento]:
+        if len(listaEventos) <= 1:
+            return listaEventos
+
+        pivote = listaEventos[len(listaEventos) // 2]
+        fecha_pivote = datetime.strptime(pivote.fecha, "%Y-%m-%d")
+
+        menores = [e for e in listaEventos if datetime.strptime(e.fecha, "%Y-%m-%d") < fecha_pivote]
+        iguales = [e for e in listaEventos if datetime.strptime(e.fecha, "%Y-%m-%d") == fecha_pivote]
+        mayores = [e for e in listaEventos if datetime.strptime(e.fecha, "%Y-%m-%d") > fecha_pivote]
+
+        return QuickSort.ordenarEventos(menores) + iguales + QuickSort.ordenarEventos(mayores)
 
 class Tiquetera:
     def __init__(self):
